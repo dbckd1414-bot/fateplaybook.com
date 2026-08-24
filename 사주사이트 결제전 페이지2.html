@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 운명 공략집 — 49개 카드덱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0c; --card:#1a1a1e; --card-2:#232328;
+    --gold:#d4af37; --gold-2:#f0d060; --gold-dim:#8a6f24;
+    --text:#f4f4f5; --muted:#a1a1aa; --muted-2:#71717a;
+    --line: rgba(255,255,255,0.08); --heart:#ff5577;
+    --element-wood: #22c55e;
+    --element-fire: #ef4444;
+    --element-earth: var(--gold-2);
+    --element-metal: #c4c4cc;
+    --element-water: #38bdf8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;-webkit-font-smoothing:antialiased;}
+  .app{max-width:440px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;box-shadow:0 0 60px rgba(0,0,0,0.6);overflow:hidden;}
+
+  /* ===== 화면1: 캐릭터 인사(미연시풍) ===== */
+  #introScreen{position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;justify-content:flex-end;
+    background:radial-gradient(ellipse 600px 500px at 50% 30%, rgba(212,175,55,0.15), transparent 60%), var(--bg);}
+  .char-portrait{flex:1;display:flex;align-items:center;justify-content:center;}
+  .char-portrait-circle{width:180px;height:180px;border-radius:50%;background:linear-gradient(160deg, var(--card-2), var(--card));
+    border:2px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:64px;
+    box-shadow:0 0 60px rgba(212,175,55,0.25);}
+  .dialogue-box{background:var(--card);border-top:2px solid var(--gold);padding:20px 20px 28px;position:relative;}
+  .char-name{font-family:'Noto Serif KR';font-weight:800;font-size:14px;color:var(--gold-2);margin:0 0 8px;}
+  .dialogue-text{font-size:14.5px;line-height:1.7;margin:0 0 18px;min-height:76px;}
+  .dialogue-next{width:100%;background:linear-gradient(135deg, var(--gold-2), var(--gold-dim));color:#1a1408;
+    font-weight:800;font-size:14.5px;padding:13px;border:none;border-radius:12px;cursor:pointer;}
+  .dialogue-tap-hint{position:absolute;bottom:8px;right:20px;font-size:10px;color:var(--muted-2);font-family:'JetBrains Mono';}
+
+  /* ===== 화면2: 카드덱 메인 ===== */
+  #deckScreen{display:none;}
+  .deck-header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;z-index:40;
+    background:rgba(10,10,12,0.96);backdrop-filter:blur(8px);
+    padding:14px 18px 12px;border-bottom:1px solid var(--line);}
+  .deck-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .deck-title{font-family:'Noto Serif KR';font-weight:800;font-size:15px;margin:0;}
+  .hamburger-btn{background:var(--card-2);border:1px solid var(--line);border-radius:9px;
+    width:32px;height:32px;color:var(--text);font-size:16px;flex-shrink:0;display:flex;
+    align-items:center;justify-content:center;cursor:pointer;}
+  .progress-row{display:flex;align-items:center;gap:10px;}
+  .progress-track{flex:1;height:8px;background:var(--card-2);border-radius:100px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg, var(--gold-dim), var(--gold-2));border-radius:100px;
+    transition:width .4s ease;}
+  .progress-label{font-family:'JetBrains Mono';font-size:11px;color:var(--gold-2);font-weight:700;white-space:nowrap;}
+
+  .deck-body{padding:80px 18px 120px;}
+
+  /* ===== 사주 대시보드 히어로 슬라이드 (여백 및 상하 균형 최적화) ===== */
+  .saju-hero-wrap{position:relative;margin:0 -18px 14px;}
+  .saju-hero-row{display:flex;gap:10px;overflow-x:auto;padding:0 18px 4px;scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab;}
+  .saju-hero-row::-webkit-scrollbar{display:none;}
+  .saju-hero-row:active{cursor:grabbing;}
+  
+  /* 슬라이드 박스: 높이 430px 고정, 내부 요소 상하 여백 꽉 차도록 분배 */
+  .saju-hero-slide{
+    flex:0 0 100%;
+    width:100%;
+    scroll-snap-align:center;
+    height:430px;
+    overflow:hidden;
+    background:linear-gradient(165deg, var(--card-2), var(--card));
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:0;
+  }
+  
+  /* 대제목: 고정 위치 및 규격 통일 */
+  .saju-hero-label{
+    font-family:'JetBrains Mono';
+    font-size:11.5px;
+    color:var(--gold-2);
+    letter-spacing:.08em;
+    font-weight:700;
+    margin:0 0 4px 0;
+    height:20px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-shrink:0;
+  }
+
+  .saju-dots{display:flex;justify-content:center;gap:6px;margin-top:10px;}
+  .saju-dot{width:6px;height:6px;border-radius:50%;background:var(--line);}
+  .saju-dot.active{background:var(--gold);width:16px;border-radius:100px;}
+
+  .hero-hint{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;
+    background:rgba(20,20,24,0.7);border:1px solid rgba(212,175,55,0.25);color:var(--gold-2);
+    font-size:18px;line-height:1;z-index:30;display:flex;align-items:center;justify-content:center;
+    backdrop-filter:blur(6px);cursor:pointer;}
+  .hero-hint-left{left:4px;}
+  .hero-hint-right{right:4px;}
+  .hero-hint.hide{display:none;}
+
+  /* 슬라이드 공통 컴포넌트 여백 꽉 채움 */
+  .user-info-box{background:rgba(0,0,0,0.25);border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+  .user-info-row{display:flex;align-items:center;justify-content:space-between;}
+  .user-info-name{font-size:13px;font-weight:700;}
+  .user-info-sub{font-size:11px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono';}
+  .change-btn{font-size:10px;color:var(--gold-2);background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);padding:3px 8px;border-radius:6px;cursor:pointer;}
+
+  .summary-4grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .summary-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 4px;text-align:center;}
+  .summary-card-icon-circle{width:32px;height:32px;border-radius:50%;border:1px solid rgba(212,175,55,0.25);
+    background:linear-gradient(160deg, var(--card-2), var(--card));display:flex;align-items:center;justify-content:center;
+    font-size:14px;margin:0 auto 6px;}
+  .summary-card-label{font-size:9.5px;color:var(--muted);margin-bottom:2px;}
+  .summary-card-value{font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;}
+  .summary-card-sub{font-size:8.5px;color:var(--gold-2);margin-top:2px;opacity:0.85;}
+
+  .hero-insight-card{background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:11px 13px;}
+  .hero-insight-badge{font-size:10px;font-weight:800;color:var(--gold-2);margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+
+  /* 툴팁 */
+  .info-q{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;
+    background:rgba(212,175,55,0.15);color:var(--gold-2);font-size:9.5px;font-weight:800;border:1px solid rgba(212,175,55,0.3);
+    cursor:pointer;flex-shrink:0;margin-left:4px;}
+  .info-tooltip{display:none;position:absolute;z-index:50;background:var(--card-2);border:1px solid rgba(212,175,55,0.35);
+    border-radius:8px;padding:8px 10px;font-size:9.5px;color:var(--muted);line-height:1.5;width:200px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.5);}
+  .info-tooltip.show{display:block;}
+  .info-wrap{position:relative;display:inline-flex;align-items:center;}
+  .hero-insight-text{font-size:11.5px;line-height:1.6;color:#e4e4e7;margin:0 0 6px;}
+  .hero-tag-row{display:flex;flex-wrap:wrap;gap:5px;}
+  .hero-tag{font-size:9.5px;background:rgba(255,255,255,0.05);border:1px solid var(--line);padding:2px 7px;border-radius:5px;color:var(--muted);}
+
+  /* 슬라이드 2 표 */
+  .pillar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;}
+  .pillar-col-label{font-size:10px;color:var(--muted-2);margin-bottom:4px;}
+  .pillar-tengod{font-size:9.5px;font-weight:700;margin-bottom:4px;color:var(--gold-2);}
+  .pillar-tengod.sub{font-size:8.5px;color:var(--muted-2);font-weight:400;margin:2px 0 0;}
+  .pillar-box{border-radius:8px;padding:9px 2px;font-family:'Noto Serif KR';font-weight:800;font-size:19px;margin-bottom:4px;}
+  .pillar-box.wood{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);color:#fff;}
+  .pillar-box.fire{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fff;}
+  .pillar-box.earth{background:linear-gradient(145deg, var(--gold-2), var(--gold-dim));color:#1a1408;}
+  .pillar-box.metal{background:rgba(196,196,204,0.15);border:1px solid rgba(196,196,204,0.4);color:#fff;}
+  .pillar-box.water{background:rgba(56,189,248,0.2);border:1px solid rgba(56,189,248,0.4);color:#fff;}
+  .pillar-sub{font-size:8.5px;color:var(--muted-2);margin-top:2px;}
+  .pillar-wonsung{font-size:9px;font-weight:700;color:var(--text);margin-top:4px;background:rgba(0,0,0,0.3);padding:3px 0;border-radius:4px;}
+
+  /* 슬라이드 3 오행 */
+  .element-list{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+  .element-col{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 4px;
+    display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .element-col-chip{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;color:#fff;}
+  .element-col-count{font-family:'JetBrains Mono';font-weight:800;font-size:14.5px;color:var(--text);}
+  
+  .pillar4-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .pillar4-col{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .pillar4-label{font-size:8.5px;color:var(--muted-2);display:flex;align-items:center;gap:2px;}
+  .pillar4-glyph{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:800;}
+
+  /* 슬라이드 4 밸런스 */
+  .slide4-gauge-box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 6px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+  .slide4-score{font-family:'Noto Serif KR';font-weight:900;font-size:30px;color:var(--gold-2);line-height:1;}
+  .slide4-level{font-size:11px;font-weight:800;color:#fff;margin-top:4px;background:rgba(212,175,55,0.2);padding:2px 8px;border-radius:4px;}
+
+  .balance-metric-wrap{background:rgba(0,0,0,0.25);border:1px solid var(--line);border-radius:10px;padding:11px 12px;}
+  .balance-metric-title{font-size:10.5px;font-weight:700;color:var(--gold-2);margin-bottom:8px;display:flex;justify-content:space-between;}
+  .balance-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .balance-row:last-child{margin-bottom:0;}
+  .balance-name{font-size:10.5px;color:var(--muted);width:82px;flex-shrink:0;}
+  .balance-track{flex:1;height:5px;background:var(--card-2);border-radius:100px;overflow:hidden;}
+  .balance-fill{height:100%;border-radius:100px;}
+  .balance-pct{font-family:'JetBrains Mono';font-size:10px;font-weight:700;width:32px;text-align:right;}
+
+  /* 슬라이드 5 */
+  .stat-grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
+  .stat-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;}
+  .stat-label{font-size:11px;color:var(--muted);font-weight:500;}
+  .stat-grade{font-family:'JetBrains Mono';font-size:12px;font-weight:900;color:var(--gold-2);}
+
+  .action-guide-box{display:flex;flex-direction:column;gap:5px;}
+  .action-item{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:11px;line-height:1.45;display:flex;align-items:flex-start;gap:6px;}
+  .action-item strong{color:var(--gold-2);flex-shrink:0;}
+
+  .destiny-partner-card{background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);border-radius:8px;padding:8px 10px;}
+  .partner-title{font-size:11px;font-weight:800;color:#60a5fa;margin-bottom:3px;display:flex;align-items:center;gap:4px;}
+  .partner-desc{font-size:10.5px;color:#d4d4d8;line-height:1.45;margin:0;}
+
+  /* 하단 상시 고정 액션 바 */
+  .hero-bottom-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 28px;}
+  .btn-kakao-action{padding:12px 10px;border-radius:10px;font-size:12.5px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:transform .1s ease;}
+  .btn-kakao-action:active{transform:scale(0.98);}
+  
+  .btn-action-save{background:#fee500;border:none;color:#191919;box-shadow:0 4px 14px rgba(254,229,0,0.25);}
+  .btn-action-share{background:var(--card);border:1.5px solid var(--gold-dim);color:var(--gold-2);}
+  .btn-action-share:hover{background:rgba(212,175,55,0.12);}
+
+  /* 토스트 알림창 */
+  .toast-msg{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(20,20,24,0.95);
+    border:1px solid var(--gold-dim);color:var(--gold-2);font-size:12px;font-weight:700;padding:10px 18px;
+    border-radius:100px;z-index:300;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.6);backdrop-filter:blur(6px);white-space:nowrap;}
+
+  /* 카드덱 챕터 리스트 */
+  .chapter-block{margin-bottom:28px;}
+  .chapter-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .chapter-title{font-family:'Noto Serif KR';font-weight:700;font-size:14.5px;}
+  .chapter-count{font-family:'JetBrains Mono';font-size:10.5px;color:var(--muted-2);}
+
+  .card-row-wrap{margin:0 -18px;}
+  .card-row{display:flex;gap:10px;overflow-x:auto;padding:2px 18px 8px;scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab;touch-action:pan-y;}
+  .card-row:active{cursor:grabbing;}
+  .card-row::-webkit-scrollbar{display:none;}
+  .qa-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:12px 12px 10px;min-height:96px;width:150px;flex:0 0 150px;scroll-snap-align:start;
+    display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;}
+  .qa-card.unlocked{border-color:rgba(212,175,55,0.4);box-shadow:0 0 15px rgba(212,175,55,0.15);}
+  .qa-card.unlocked:hover{box-shadow:0 0 20px rgba(212,175,55,0.25);}
+  .qa-card-title{font-size:11.5px;line-height:1.45;font-weight:600;display:-webkit-box;-webkit-line-clamp:3;
+    -webkit-box-orient:vertical;overflow:hidden;}
+  .qa-card.locked .qa-card-title{opacity:0.85;}
+  .qa-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+  .qa-num{font-family:'JetBrains Mono';font-size:9.5px;color:var(--gold-dim);}
+  .qa-card.unlocked .qa-num{color:var(--gold-2);}
+  .heart-btn{background:none;border:none;font-size:14px;color:var(--muted-2);cursor:pointer;padding:2px;}
+  .heart-btn.active{color:var(--heart);}
+  .lock-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:34px;
+    opacity:0.16;pointer-events:none;filter:grayscale(1) brightness(1.8);}
+  .unlocked-badge{position:absolute;top:6px;right:6px;font-size:10px;width:20px;height:20px;border-radius:50%;
+    background:linear-gradient(145deg, var(--gold-2), var(--gold-dim));color:#1a1408;font-weight:900;
+    box-shadow:0 2px 8px rgba(212,175,55,0.4);display:flex;align-items:center;justify-content:center;}
+
+  /* ===== 화면3: 상세 풀이 페이지 ===== */
+  #detailScreen{position:fixed;top:0;left:50%;width:100%;max-width:440px;height:100%;z-index:150;
+    background:var(--bg);transform:translateX(-50%) translateX(120vw);
+    transition:transform .32s cubic-bezier(.22,.61,.36,1);overflow-y:auto;visibility:hidden;}
+  #detailScreen.active{transform:translateX(-50%);visibility:visible;}
+  .detail-topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;
+    padding:16px 18px;background:rgba(10,10,12,0.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .detail-back{background:var(--card-2);border:none;border-radius:50%;width:34px;height:34px;
+    color:var(--text);font-size:16px;flex-shrink:0;cursor:pointer;}
+  .detail-chapter-tag{font-family:'JetBrains Mono';font-size:10.5px;color:var(--gold-2);}
+  .detail-hero{padding:26px 20px 20px;background:radial-gradient(ellipse 400px 200px at 50% 0%, rgba(212,175,55,0.15), transparent 65%);}
+  .detail-q-num{font-family:'JetBrains Mono';font-size:11px;color:var(--gold-dim);margin-bottom:8px;}
+  .detail-title{font-family:'Noto Serif KR';font-weight:800;font-size:20px;line-height:1.45;margin:0;}
+  .detail-body{padding:24px 20px 100px;font-size:15px;line-height:1.9;color:#e4e4e7;white-space:pre-line;}
+  .detail-body.blurred{filter:blur(6px);user-select:none;pointer-events:none;}
+  .detail-lock-overlay{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:100%;max-width:440px;z-index:20;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0 30px;}
+  .detail-lock-overlay.show{display:flex;}
+  .detail-lock-icon{font-size:28px;margin-bottom:8px;}
+  .detail-lock-text{font-size:13px;color:var(--muted);margin:0 0 14px;}
+  .detail-lock-btn{background:linear-gradient(135deg, var(--gold-2), var(--gold-dim));color:#1a1408;
+    font-weight:900;font-size:14px;padding:12px 24px;border:none;border-radius:100px;cursor:pointer;}
+
+  .swipe-hint{position:fixed;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
+    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.35);
+    font-size:20px;line-height:1;z-index:30;display:flex;align-items:center;justify-content:center;
+    backdrop-filter:blur(4px);cursor:pointer;}
+  .swipe-hint-left{left:calc(50% - 205px);}
+  .swipe-hint-right{right:calc(50% - 205px);}
+  @media(max-width:440px){
+    .swipe-hint-left{left:8px;} .swipe-hint-right{right:8px;}
+  }
+  .swipe-hint.hide{display:none;}
+
+  /* 결제 모달 & 하단 고정바 */
+  .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;
+    z-index:170;background:var(--card);border-top:1px solid var(--line);display:none;
+    padding:8px 0 calc(8px + env(safe-area-inset-bottom));}
+  .bottom-nav.show{display:flex;}
+  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;
+    color:var(--muted);font-size:10.5px;padding:6px;cursor:pointer;}
+  .nav-item.active{color:var(--gold-2);}
+  .nav-icon{font-size:19px;}
+
+  .paywall-modal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.75);padding:0 24px;}
+  .paywall-modal.active{display:flex;}
+  .paywall-sheet{width:100%;max-width:340px;background:var(--card);border:1px solid var(--gold-dim);
+    border-radius:20px;padding:28px 24px;text-align:center;}
+  .paywall-icon{font-size:36px;margin-bottom:12px;}
+  .paywall-title{font-family:'Noto Serif KR';font-weight:800;font-size:16.5px;margin:0 0 8px;}
+  .paywall-desc{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 20px;}
+  .paywall-cta{width:100%;background:linear-gradient(135deg, var(--gold-2), var(--gold-dim));color:#1a1408;
+    font-weight:900;font-size:15px;padding:14px;border:none;border-radius:12px;margin-bottom:8px;cursor:pointer;}
+  .paywall-cancel{background:none;border:none;color:var(--muted-2);font-size:12px;padding:6px;cursor:pointer;}
+
+  .deck-sticky-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;
+    z-index:200;background:var(--card);border-top:1px solid rgba(212,175,55,0.25);
+    display:none;align-items:stretch;box-shadow:0 -8px 24px rgba(0,0,0,0.4);}
+  .deck-sticky-left{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:10px 14px;flex-shrink:0;border-right:1px solid var(--line);}
+  .deck-sticky-discount{font-family:'Noto Sans KR';font-weight:800;font-size:11.5px;color:var(--gold-2);white-space:nowrap;}
+  .deck-sticky-timer-label{font-size:9px;color:var(--muted-2);margin-top:2px;}
+  .deck-sticky-timer{font-family:'JetBrains Mono';font-weight:800;font-size:13px;color:var(--gold);letter-spacing:0.03em;margin-top:1px;}
+  .deck-sticky-cta{flex:1;background:linear-gradient(135deg, var(--gold-2), var(--gold-dim));border:none;
+    color:#1a1408;font-weight:900;font-size:14.5px;display:flex;align-items:center;justify-content:center;gap:6px;
+    padding:0 16px;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 토스트 알림 메시지 바 -->
+  <div class="toast-msg" id="toastMsg"></div>
+
+  <!-- ===== 화면1: 캐릭터 인사 ===== -->
+  <div id="introScreen">
+    <div class="char-portrait"><div class="char-portrait-circle">🔮</div></div>
+    <div class="dialogue-box">
+      <p class="char-name">운명 가이드</p>
+      <p class="dialogue-text" id="dialogueText"></p>
+      <button class="dialogue-next" id="dialogueNextBtn">다음</button>
+      <p class="dialogue-tap-hint">TAP</p>
+    </div>
+  </div>
+
+  <!-- ===== 화면2: 카드덱 메인 ===== -->
+  <div id="deckScreen">
+    <div class="deck-header">
+      <div class="deck-title-row">
+        <p class="deck-title" id="deckTitle"></p>
+        <button class="hamburger-btn" onclick="alert('전체 메뉴 (준비 중)')">☰</button>
+      </div>
+      <div class="progress-row">
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <span class="progress-label" id="progressLabel">0% (0/49)</span>
+      </div>
+    </div>
+    
+    <div class="deck-body" id="deckBody">
+      <!-- 1. 상단 사주 원국 5단 슬라이더 -->
+      <div class="saju-hero-wrap">
+        <div class="saju-hero-row" id="sajuHeroRow">
+
+          <!-- 슬라이드1: 핵심 요약 -->
+          <div class="saju-hero-slide">
+            <p class="saju-hero-label">👑 나의 운명 핵심 요약 (1/5)</p>
+            <div class="user-info-box">
+              <div class="user-info-row">
+                <span class="user-info-name">정유창 (본인) 남성</span>
+                <button class="change-btn">정보 변경 ›</button>
+              </div>
+              <div class="user-info-row">
+                <span class="user-info-sub">1988.10.10 (양력) 15:45</span>
+                <span class="user-info-sub" style="color:var(--gold-2);">무술(戊戌)일주</span>
+              </div>
+            </div>
+            <div class="summary-4grid">
+              <div class="summary-card">
+                <div class="summary-card-icon-circle" style="background:var(--gold-2);color:#1a1408;font-weight:900;">토</div>
+                <p class="summary-card-label">나의 오행</p>
+                <p class="summary-card-value">토(土)</p>
+                <p class="summary-card-sub">비중 62.5%</p>
+              </div>
+              <div class="summary-card">
+                <div class="summary-card-icon-circle">🐶</div>
+                <p class="summary-card-label">일주 동물</p>
+                <p class="summary-card-value">노란 개</p>
+                <p class="summary-card-sub">황금개</p>
+              </div>
+              <div class="summary-card">
+                <div class="summary-card-icon-circle">💎</div>
+                <p class="summary-card-label">타고난 성향</p>
+                <p class="summary-card-value">비견</p>
+                <p class="summary-card-sub">강한 주체성</p>
+              </div>
+              <div class="summary-card">
+                <div class="summary-card-icon-circle">⚡</div>
+                <p class="summary-card-label">대표 신살</p>
+                <p class="summary-card-value">괴강살</p>
+                <p class="summary-card-sub">우두머리 기질</p>
+              </div>
+            </div>
+            <div class="hero-insight-card">
+              <div class="hero-insight-badge">⚡ AI 하드웨어 1줄 팩폭 진단</div>
+              <p class="hero-insight-text">"거대한 산처럼 흔들리지 않는 <strong>압도적인 뚝심과 카리스마</strong>. 남 밑에 있기보다 직접 판을 짤 때 운이 폭발하는 자수성가형입니다."</p>
+              <div class="hero-tag-row">
+                <span class="hero-tag">#자수성가형</span>
+                <span class="hero-tag">#동업절대주의</span>
+                <span class="hero-tag">#자기판짜기</span>
+                <span class="hero-tag">#은근한츤데레</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 슬라이드2: 상세 사주 원국 4기둥 -->
+          <div class="saju-hero-slide">
+            <p class="saju-hero-label">📊 상세 사주 원국 4기둥 (2/5)</p>
+            <div class="pillar-grid">
+              <div>
+                <p class="pillar-col-label">시주</p>
+                <p class="pillar-tengod">식신</p>
+                <div class="pillar-box metal">庚</div>
+                <p class="pillar-sub">+경, 쇠금</p>
+                <div class="pillar-box metal">申</div>
+                <p class="pillar-sub">+신, 쇠금</p>
+                <p class="pillar-tengod sub">식신</p>
+                <p class="pillar-wonsung">병</p>
+              </div>
+              <div>
+                <p class="pillar-col-label">일주</p>
+                <p class="pillar-tengod">일원</p>
+                <div class="pillar-box earth">戊</div>
+                <p class="pillar-sub">+무, 흙토</p>
+                <div class="pillar-box earth">戌</div>
+                <p class="pillar-sub">+술, 흙토</p>
+                <p class="pillar-tengod sub">비견</p>
+                <p class="pillar-wonsung">묘</p>
+              </div>
+              <div>
+                <p class="pillar-col-label">월주</p>
+                <p class="pillar-tengod">편재</p>
+                <div class="pillar-box water">壬</div>
+                <p class="pillar-sub">+임, 물수</p>
+                <div class="pillar-box earth">戌</div>
+                <p class="pillar-sub">+술, 흙토</p>
+                <p class="pillar-tengod sub">비견</p>
+                <p class="pillar-wonsung">묘</p>
+              </div>
+              <div>
+                <p class="pillar-col-label">년주</p>
+                <p class="pillar-tengod">비견</p>
+                <div class="pillar-box earth">戊</div>
+                <p class="pillar-sub">+무, 흙토</p>
+                <div class="pillar-box earth">辰</div>
+                <p class="pillar-sub">+진, 흙토</p>
+                <p class="pillar-tengod sub">비견</p>
+                <p class="pillar-wonsung">관대</p>
+              </div>
+            </div>
+            <div class="hero-insight-card">
+              <div class="hero-insight-badge">🔍 원국 구조 핵심 포인트</div>
+              <p class="hero-insight-text" style="-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;">기둥 4개 중 <strong>토 기운이 5글자</strong>를 차지해 에너지가 응축된 구조예요. 표현력을 살려 재물을 캐내면 유리해요.</p>
+              <div class="hero-tag-row">
+                <span class="hero-tag">#토기운강함</span>
+                <span class="hero-tag">#전문기술특화</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 슬라이드3: 상세 오행 분포 -->
+          <div class="saju-hero-slide">
+            <p class="saju-hero-label">🌳 오행 균형 분포 (3/5)</p>
+            <div class="element-list">
+              <div class="element-col" data-name="관성 · 책임감·통제력" data-color="var(--element-wood)">
+                <div class="element-col-chip" style="background:var(--element-wood);">목</div>
+                <span class="element-col-count">0개</span>
+              </div>
+              <div class="element-col" data-name="인성 · 배움·수용력" data-color="var(--element-fire)">
+                <div class="element-col-chip" style="background:var(--element-fire);">화</div>
+                <span class="element-col-count">0개</span>
+              </div>
+              <div class="element-col" data-name="비겁 · 내 고집·주체성" data-color="var(--element-earth)">
+                <div class="element-col-chip" style="background:var(--element-earth);color:#1a1408;">토</div>
+                <span class="element-col-count">5개</span>
+              </div>
+              <div class="element-col" data-name="식상 · 재능 발산력" data-color="var(--element-metal)">
+                <div class="element-col-chip" style="background:var(--element-metal);color:#222;">금</div>
+                <span class="element-col-count">2개</span>
+              </div>
+              <div class="element-col" data-name="재성 · 돈 버는 감각" data-color="var(--element-water)">
+                <div class="element-col-chip" style="background:var(--element-water);">수</div>
+                <span class="element-col-count">1개</span>
+              </div>
+            </div>
+            <div class="pillar4-grid" id="pillar4Grid"></div>
+            <div class="hero-insight-card">
+              <div class="hero-insight-badge">💊 오행 개운 처방전</div>
+              <p class="hero-insight-text" style="-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;">부족한 <strong>목과 수 기운</strong>을 채우면 재물길이 뚫려요. 물을 자주 마시고 산책하면 도움이 돼요.</p>
+              <div class="hero-tag-row">
+                <span class="hero-tag">#물자주마시기</span>
+                <span class="hero-tag">#유산소운동</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 슬라이드4: 오행 순환 & 신강신약 -->
+          <div class="saju-hero-slide">
+            <p class="saju-hero-label">🔄 타고난 에너지 세기 (4/5)</p>
+            
+            <div class="slide4-gauge-box">
+              <span style="font-size:10px;color:var(--muted);margin-bottom:2px;">신강신약 · 타고난 에너지 세기</span>
+              <span class="slide4-score">70</span>
+              <span class="slide4-level">에너지 강함</span>
+              <p style="font-size:9.5px;color:var(--muted-2);margin:6px 0 0;line-height:1.4;text-align:center;">
+                💡 타고난 기운이 강한지 약한지를 0~100점으로 나타낸 점수예요.
+              </p>
+            </div>
+
+            <div class="balance-metric-wrap">
+              <div class="balance-metric-title">
+                <span>⚡ 타고난 멘탈 & 실행 밸런스</span>
+              </div>
+              <div class="balance-row">
+                <span class="balance-name">회복 탄력성
+                  <span class="info-wrap"><span class="info-q" onclick="toggleInfo(this)">?</span>
+                  <span class="info-tooltip">위기에서 얼마나 빨리 회복하는지예요. 70%면 웬만한 타격은 금방 털어내요.</span></span>
+                </span>
+                <div class="balance-track"><div class="balance-fill" style="width:70%;background:linear-gradient(90deg,#e0793c,var(--gold-2));"></div></div>
+                <span class="balance-pct" style="color:var(--gold-2);">70%</span>
+              </div>
+              <div class="balance-row">
+                <span class="balance-name">자기 주도권
+                  <span class="info-wrap"><span class="info-q" onclick="toggleInfo(this)">?</span>
+                  <span class="info-tooltip">남 말보다 내 판단을 믿고 밀어붙이는 힘이에요. 88%면 주관이 아주 강한 편이에요.</span></span>
+                </span>
+                <div class="balance-track"><div class="balance-fill" style="width:87.5%;background:linear-gradient(90deg,#3b82f6,#60a5fa);"></div></div>
+                <span class="balance-pct" style="color:#60a5fa;">88%</span>
+              </div>
+              <div class="balance-row">
+                <span class="balance-name">타인 의존도
+                  <span class="info-wrap"><span class="info-q" onclick="toggleInfo(this)">?</span>
+                  <span class="info-tooltip">낮을수록 남에게 안 기대는 타입이에요. 0%는 "전혀 안 기댄다"에 가까워요.</span></span>
+                </span>
+                <div class="balance-track"><div class="balance-fill" style="width:0%;background:#71717a;"></div></div>
+                <span class="balance-pct" style="color:var(--muted);">0%</span>
+              </div>
+            </div>
+
+            <div class="hero-insight-card">
+              <div class="hero-insight-badge">🔥 에너지 강한 사람의 실행 원칙</div>
+              <p class="hero-insight-text">"남의 의견에 휘둘릴 때보다 <strong>나의 직관을 믿고 독립적으로 추진할 때</strong> 성과가 더 좋게 나타나요."</p>
+              <div class="hero-tag-row">
+                <span class="hero-tag">#강한추진력</span>
+                <span class="hero-tag">#독립적결정</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 슬라이드5: 운명 하드웨어 총평 -->
+          <div class="saju-hero-slide">
+            <p class="saju-hero-label">💡 나의 운명 하드웨어 총평 (5/5)
+              <span class="info-wrap">
+                <span class="info-q" onclick="toggleInfo(this)">?</span>
+                <span class="info-tooltip" style="width:210px;">판단 기준(8글자 중 개수)<br>0개=D · 1개=C · 2개=B · 3개=A · 4개=S · 5개=S+ · 6개=SS · 7개=SS+ · 8개=SSS</span>
+              </span>
+            </p>
+            
+            <div class="user-info-box">
+              <div style="font-size:11.5px;font-weight:800;color:var(--gold-2);margin-bottom:2px;">👑 무술일주 · 괴강일주 마스터 진단</div>
+              <div style="font-size:11px;line-height:1.45;color:#e4e4e7;">
+                거대한 산처럼 우직한 신뢰감과 뚝심. 어떤 위기가 와도 판을 뒤집는 <strong>자수성가형 기질</strong>입니다.
+              </div>
+            </div>
+
+            <div class="stat-grid-4">
+              <div class="stat-card">
+                <span class="stat-label">뚝심·돌파력</span>
+                <span class="stat-grade" data-count="5"></span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">위기 극복력</span>
+                <span class="stat-grade" data-score="70"></span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">재물 포착력</span>
+                <span class="stat-grade" data-count="1"></span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">조직 순응도</span>
+                <span class="stat-grade" data-score="12.5"></span>
+              </div>
+            </div>
+
+            <div class="action-guide-box">
+              <div class="action-item">
+                <strong>🚀 장점:</strong> 한번 정한 목표는 끝까지 밀어붙이는 압도적인 추진력
+              </div>
+              <div class="action-item">
+                <strong style="color:#ff8899;">⚠️ 주의:</strong> 재물 감각은 상대적으로 약해, 돈 관리는 별도 원칙 수립 권장
+              </div>
+            </div>
+
+            <div class="destiny-partner-card">
+              <div class="partner-title">🔑 평생 개운 & 귀인 파트너 매칭</div>
+              <p class="partner-desc">
+                나의 귀인은 <strong>쇠(금)와 물(수) 기운</strong>을 가진 사람입니다. 내 뚝심을 존중해주며 현실적 금전 감각을 불어넣어 줄 파트너가 최적입니다.
+              </p>
+            </div>
+          </div>
+
+        </div>
+        <div class="saju-dots" id="sajuDots"></div>
+        <button class="hero-hint hero-hint-left hide" id="heroPrevBtn" onclick="goPrevHeroSlide()">‹</button>
+        <button class="hero-hint hero-hint-right" id="heroNextBtn" onclick="goNextHeroSlide()">›</button>
+      </div>
+
+      <!-- 2. 슬라이더 하단 상시 고정 2대 고전환 액션 바 -->
+      <div class="hero-bottom-actions">
+        <button class="btn-kakao-action btn-action-save" onclick="handleKakaoSyncSave()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="#191919"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.8 1.885 5.253 4.725 6.643-.207.76-.75 2.75-.86 3.178-.135.534.195.526.41.383.17-.113 2.705-1.84 3.79-2.583.62.09 1.27.139 1.935.139 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
+          <span>카카오로 평생 저장</span>
+        </button>
+        <button class="btn-kakao-action btn-action-share" onclick="handleKakaoViralShare()">
+          <span>💬</span>
+          <span>카톡으로 공유하기</span>
+        </button>
+      </div>
+
+      <!-- 3. 카드덱 본체 -->
+      <div id="deckBodyContent"></div>
+    </div>
+  </div>
+
+  <!-- ===== 화면3: 상세 풀이 페이지 ===== -->
+  <div id="detailScreen">
+    <div class="detail-topbar">
+      <button class="detail-back" onclick="closeDetail()">←</button>
+      <span class="detail-chapter-tag" id="detailChapterTag"></span>
+      <button class="hamburger-btn" style="margin-left:auto;" onclick="alert('전체 메뉴 (준비 중)')">☰</button>
+    </div>
+    <div class="detail-hero">
+      <p class="detail-q-num" id="detailQNum"></p>
+      <h1 class="detail-title" id="detailTitle"></h1>
+    </div>
+    <div class="detail-divider"></div>
+    <div class="detail-body" id="detailBody"></div>
+    <button class="swipe-hint swipe-hint-left" id="swipeHintPrev" onclick="goPrevItem()">‹</button>
+    <button class="swipe-hint swipe-hint-right" id="swipeHintNext" onclick="goNextItem()">›</button>
+    <div class="detail-lock-overlay" id="detailLockOverlay">
+      <div class="detail-lock-icon">🔒</div>
+      <p class="detail-lock-text">여기부터는 결제해야 볼 수 있어요</p>
+      <button class="detail-lock-btn" onclick="openPaywall()">⚡ 48,900원에 전체 해금</button>
+    </div>
+  </div>
+
+  <!-- ===== 결제 후 하단 네비바 ===== -->
+  <div class="bottom-nav" id="bottomNav">
+    <button class="nav-item active"><span class="nav-icon">🏠</span>홈</button>
+    <button class="nav-item"><span class="nav-icon">♥</span>즐겨찾기</button>
+    <button class="nav-item"><span class="nav-icon">👤</span>내정보</button>
+  </div>
+
+  <!-- ===== 결제유도 모달 ===== -->
+  <div class="paywall-modal" id="paywallModal">
+    <div class="paywall-sheet">
+      <div class="paywall-icon">🔒</div>
+      <p class="paywall-title">여기부터는 잠겨있어요</p>
+      <p class="paywall-desc">진단은 다 보여드렸어요.<br>해결책과 구체적인 시기는<br>결제 후 전부 열람 가능해요.</p>
+      <button class="paywall-cta">⚡ 48,900원에 전체 해금하기</button>
+      <button class="paywall-cancel" onclick="closeModal('paywallModal')">나중에 볼게요</button>
+    </div>
+  </div>
+
+  <!-- ===== 하단 고정바 ===== -->
+  <div class="deck-sticky-bar" id="deckStickyBar">
+    <div class="deck-sticky-left">
+      <span class="deck-sticky-discount">80% 할인</span>
+      <span class="deck-sticky-timer-label">혜택 종료까지</span>
+      <span class="deck-sticky-timer" id="deckCountdown">23:59:59</span>
+    </div>
+    <button class="deck-sticky-cta" onclick="openPaywall()">내 운명 전체보기 ⇒</button>
+  </div>
+
+</div>
+
+<script>
+const PRODUCT_NAME = "평생총운";
+document.getElementById('deckTitle').textContent = `내 운명 공략집 - ${PRODUCT_NAME}`;
+
+const CHAPTERS = [
+  { title:"1장. 타고난 본질과 숨겨진 성향", unlocked:true, items:[
+    "내 사주 하드웨어의 기본 엔진과 핵심 에너지 성향은?",
+    "겉모습(페르소나) vs 혼자 있을 때 내면의 괴리는?",
+    "머리로는 아는데 안 고쳐지는 고정 행동 습관은?",
+    "스트레스 한계 시 터지는 파괴적 방어기제는?",
+    "절대 양립할 수 없는 두 가지 욕망의 정체는?",
+    "남에게 말 안 하는 나만의 결벽증 지뢰는?",
+    "단점을 뒤집었을 때 터지는 궁극의 잠재력은?"
+  ]},
+  { title:"2장. 재물과 평생 부의 그릇", unlocked:false, items:[
+    "평생 재물 그릇의 크기와 형태는?","제1의 현금 파이프라인은?","결정적 재물 누수 구멍은?",
+    "부동산형 vs 현금회전형 체질은?","가장 위험한 투자 방식은?","동업/금전거래 방어막은?",
+    "인생 최대 목돈 황금 타이밍은?","오늘부터 걸 계정 분리 규칙은?"
+  ]},
+  { title:"3장. 인간관계와 호구 패턴 탈출", unlocked:false, items:[
+    "매번 총대 메는 호구 패턴의 원인은?","상대를 질리게 하는 내 화법 실수는?",
+    "에너지를 갉아먹는 빌런의 특징은?","감정소모 없는 손절 기준선은?",
+    "나를 살리는 귀인의 특징은?","바운더리 설정법은?"
+  ]},
+  { title:"4장. 직업과 커리어 독점권", unlocked:false, items:[
+    "시장 독점 우위를 점할 업은?","직장인 vs 독립/프리랜서 체질은?",
+    "독박 과부하 치명적 결함은?","남들은 힘든데 나는 쉬운 반전 일머리는?",
+    "승진·이직·독립 최적 타이밍은?","직장 정치 마찰 회피 처세술은?","반복 수익원 전환법은?"
+  ]},
+  { title:"5장. 신체 멘탈 방어 루틴", unlocked:false, items:[
+    "에너지 소진 시 먼저 마비되는 부위는?","두뇌 과열 강제 리셋법은?",
+    "수면 리듬 붕괴 방어 루틴은?","부족한 기운 채우는 맞춤 활동은?","번아웃 급속 복구 처방전은?"
+  ]},
+  { title:"6장. 인생 타임라인과 대운의 계절", unlocked:false, items:[
+    "초년운: 과거 방황과 기반 형성기는?","중년운: 현재 대운의 당면 과제는?",
+    "말년운: 인생 후반전 안착의 형태는?","교운기 직전 나타나는 전조 증상은?",
+    "교운기 생존 수칙은?","향후 3년 단기 흐름은?"
+  ]},
+  { title:"7장. 평생 소장 실천 가이드", unlocked:false, items:[
+    "평생 읽어야 할 책 테마는?","운을 올리는 평생 취미는?","곁에 두면 안 되는 사람 유형은?",
+    "패가망신 막는 절대 금기 행동은?","직관 vs 데이터 판단 기준은?","모닝 루틴은?","비상 행동 매뉴얼은?"
+  ]},
+  { title:"8장. 종합 결론 및 실행 헌장", unlocked:false, items:[
+    "이번 생 완수해야 할 단 하나의 과제는?","불안을 잠재우는 마인드셋은?","오늘부터 실행할 헌장 3가지는?"
+  ]}
+];
+
+const SAMPLE_BODY = `정밀 진단: 데이터 근거 요약이 여기 들어가요.
+
+이 카드의 실제 내용은 나중에 리포트 생성 엔진과 연결하면, 여기에 실제 생성된 250~300자 분량의 내용이 표시돼요. 지금은 카드덱 UI 자체를 보여드리기 위한 샘플 텍스트예요.
+
+1줄 실전 치트키: 오늘 당장 해볼 행동 지침이 여기 들어가요.`;
+
+let unlockedCount = 0, totalCount = 0;
+const favorites = new Set();
+
+function buildDeck(){
+  const body = document.getElementById('deckBodyContent');
+  body.innerHTML = '';
+  CHAPTERS.forEach((ch, ci) => {
+    totalCount += ch.items.length;
+    unlockedCount += 1;
+
+    const block = document.createElement('div');
+    block.className = 'chapter-block';
+    block.innerHTML = `
+      <div class="chapter-head">
+        <span class="chapter-title">${ch.title}</span>
+        <span class="chapter-count">${ch.items.length}문항</span>
+      </div>
+      <div class="card-row-wrap"><div class="card-row"></div></div>`;
+    const grid = block.querySelector('.card-row');
+    enableDragScroll(grid);
+
+    ch.items.forEach((item, ii) => {
+      const cardId = `c${ci}_${ii}`;
+      const isUnlocked = (ii === 0);
+      const card = document.createElement('div');
+      card.className = `qa-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+      card.innerHTML = `
+        ${isUnlocked ? `<span class="unlocked-badge">✓</span>` : `<span class="lock-watermark">🔒</span>`}
+        <p class="qa-card-title">${item}</p>
+        <div class="qa-card-footer">
+          <span class="qa-num">Q${ii+1}</span>
+          <button class="heart-btn" data-id="${cardId}" onclick="toggleFavorite(event, '${cardId}')">♡</button>
+        </div>`;
+      card.addEventListener('click', (e) => {
+        if(e.target.classList.contains('heart-btn')) return;
+        openDetail(ci, ii);
+      });
+      grid.appendChild(card);
+    });
+    body.appendChild(block);
+  });
+
+  updateProgress();
+}
+
+function updateProgress(){
+  const pct = Math.round((unlockedCount / totalCount) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `내 운명 공략 진행률 ${pct}% (${unlockedCount}/${totalCount})`;
+}
+
+function toggleFavorite(e, id){
+  e.stopPropagation();
+  const btn = e.target;
+  if(favorites.has(id)){ favorites.delete(id); btn.classList.remove('active'); btn.textContent='♡'; }
+  else{ favorites.add(id); btn.classList.add('active'); btn.textContent='♥'; }
+}
+
+let purchased = false;
+let curCi = 0, curIi = 0;
+
+function renderDetail(){
+  const ch = CHAPTERS[curCi];
+  const item = ch.items[curIi];
+  const isUnlocked = purchased || curIi === 0;
+
+  document.getElementById('detailChapterTag').textContent = `${ch.title}`;
+  document.getElementById('detailQNum').textContent = `Q${curIi+1} / ${ch.items.length}`;
+  document.getElementById('detailTitle').textContent = item;
+
+  const bodyEl = document.getElementById('detailBody');
+  const overlayEl = document.getElementById('detailLockOverlay');
+  bodyEl.textContent = SAMPLE_BODY;
+  bodyEl.classList.toggle('blurred', !isUnlocked);
+  overlayEl.classList.toggle('show', !isUnlocked);
+  document.getElementById('detailScreen').scrollTop = 0;
+
+  document.getElementById('swipeHintPrev').classList.toggle('hide', curIi === 0);
+  document.getElementById('swipeHintNext').classList.toggle('hide', curIi === ch.items.length - 1);
+}
+function goNextItem(){
+  const ch = CHAPTERS[curCi];
+  if(curIi < ch.items.length - 1){ curIi++; renderDetail(); }
+}
+function goPrevItem(){
+  if(curIi > 0){ curIi--; renderDetail(); }
+}
+
+function openDetail(ci, ii){
+  curCi = ci; curIi = ii;
+  renderDetail();
+  document.getElementById('detailScreen').classList.add('active');
+}
+function closeDetail(){
+  document.getElementById('detailScreen').classList.remove('active');
+}
+function openPaywall(){ document.getElementById('paywallModal').classList.add('active'); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+
+function enableDetailSwipe(el){
+  let startX = null;
+  el.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, {passive:true});
+  el.addEventListener('touchend', (e) => {
+    if(startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if(Math.abs(dx) > 60){
+      const ch = CHAPTERS[curCi];
+      if(dx < 0 && curIi < ch.items.length - 1){ curIi++; renderDetail(); }
+      else if(dx > 0 && curIi > 0){ curIi--; renderDetail(); }
+    }
+    startX = null;
+  });
+}
+enableDetailSwipe(document.getElementById('detailScreen'));
+
+document.querySelectorAll('.paywall-cta, .detail-lock-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    purchased = true;
+    unlockedCount = totalCount;
+    updateProgress();
+    document.querySelectorAll('.qa-card.locked').forEach(c => {
+      c.classList.remove('locked'); c.classList.add('unlocked');
+      c.querySelector('.lock-badge')?.remove();
+      c.insertAdjacentHTML('afterbegin', '<span class="unlocked-badge">✓</span>');
+    });
+    document.getElementById('deckStickyBar').style.display = 'none';
+    document.getElementById('bottomNav').classList.add('show');
+    closeModal('paywallModal');
+    renderDetail();
+  });
+});
+
+function enableDragScroll(el){
+  let isDown = false, startX, scrollLeft, moved = false;
+  function onMove(e){
+    if(!isDown) return;
+    const clientX = e.clientX ?? (e.touches && e.touches[0].clientX);
+    const dx = clientX - startX;
+    if(Math.abs(dx) > 4) moved = true;
+    el.scrollLeft = scrollLeft - dx;
+  }
+  function onUp(){
+    isDown = false;
+    window.removeEventListener('mousemove', onMove);
+    window.removeEventListener('mouseup', onUp);
+  }
+  el.addEventListener('mousedown', (e) => {
+    isDown = true; moved = false;
+    startX = e.clientX; scrollLeft = el.scrollLeft;
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  });
+  el.addEventListener('click', (e) => {
+    if(moved){ e.stopPropagation(); moved = false; }
+  }, true);
+}
+
+const DIALOGUES = [
+  "안녕! 나는 너의 사주를 안내해줄 운명 가이드야.",
+  "방금 네가 입력한 생년월일시로, 너의 사주를 아주 잘게 조각냈어.",
+  "총 49개의 질문으로 나눈 '너만의 운명 공략집'이 완성됐어.",
+  "자, 이제 너의 인생 공략집을 같이 열어볼까?"
+];
+let dIdx = 0;
+function showDialogue(){
+  document.getElementById('dialogueText').textContent = DIALOGUES[dIdx];
+  document.getElementById('dialogueNextBtn').textContent = dIdx === DIALOGUES.length-1 ? "공략집 열기" : "다음";
+}
+document.getElementById('dialogueNextBtn').addEventListener('click', () => {
+  dIdx++;
+  if(dIdx < DIALOGUES.length){ showDialogue(); }
+  else{
+    document.getElementById('introScreen').style.display = 'none';
+    document.getElementById('deckScreen').style.display = 'block';
+    document.getElementById('deckStickyBar').style.display = 'flex';
+  }
+});
+showDialogue();
+
+// ===== 등급 변환 공통 함수 =====
+function gradeByCount(n){
+  const table = ['D','C','B','A','S','S+','SS','SS+','SSS'];
+  return table[Math.max(0, Math.min(8, n))];
+}
+function gradeByScore(score){
+  const idx = Math.min(8, Math.floor(score / (100/9)));
+  return gradeByCount(idx);
+}
+const GRADE_COLOR = {
+  'D':'var(--muted)', 'C':'var(--muted)', 'B':'var(--gold-2)', 'A':'var(--gold-2)',
+  'S':'#60a5fa', 'S+':'#60a5fa', 'SS':'#ff8899', 'SS+':'#ff8899', 'SSS':'#ff3355'
+};
+
+function toggleInfo(btn){
+  const tooltip = btn.nextElementSibling;
+  const wasOpen = tooltip.classList.contains('show');
+  document.querySelectorAll('.info-tooltip.show').forEach(t => { t.classList.remove('show'); t.style.left=''; t.style.right=''; t.style.transform=''; });
+  if(!wasOpen){
+    tooltip.classList.add('show');
+    requestAnimationFrame(() => {
+      const rect = tooltip.getBoundingClientRect();
+      const slide = tooltip.closest('.saju-hero-slide') || document.body;
+      const bound = slide.getBoundingClientRect();
+      if(rect.right > bound.right - 4){
+        tooltip.style.left = 'auto';
+        tooltip.style.right = '0';
+        tooltip.style.transform = 'none';
+      }
+      if(rect.left < bound.left + 4){
+        tooltip.style.left = '0';
+        tooltip.style.right = 'auto';
+        tooltip.style.transform = 'none';
+      }
+    });
+  }
+}
+document.addEventListener('click', (e) => {
+  if(!e.target.classList.contains('info-q')){
+    document.querySelectorAll('.info-tooltip.show').forEach(t => t.classList.remove('show'));
+  }
+});
+
+// ===== 등급 렌더링 =====
+(function renderGrades(){
+  document.querySelectorAll('[data-count], [data-score]').forEach(el => {
+    let grade;
+    if(el.dataset.count !== undefined){
+      grade = gradeByCount(parseInt(el.dataset.count, 10));
+    } else {
+      grade = gradeByScore(parseFloat(el.dataset.score));
+    }
+    el.textContent = grade;
+    el.style.color = GRADE_COLOR[grade];
+  });
+})();
+
+buildDeck();
+
+// ===== 사주 8글자 그리드 렌더링 =====
+(function renderPillar4Grid(){
+  const el = document.getElementById('pillar4Grid');
+  if(!el) return;
+  const pillars = [
+    { name:'년주', stem:'戊', stemBg:'var(--element-earth)', stemColor:'#1a1408',
+      branch:'辰', branchBg:'var(--element-earth)', branchColor:'#1a1408',
+      desc:'년주는 어릴 적 환경·집안 분위기를 나타내요. 여기가 흙 기운이라, 안정적이고 보수적인 가정 분위기에서 자랐을 가능성이 커요.' },
+    { name:'월주', stem:'壬', stemBg:'var(--element-water)', stemColor:'#fff',
+      branch:'戌', branchBg:'var(--element-earth)', branchColor:'#1a1408',
+      desc:'월주는 부모·형제, 사회생활 스타일을 나타내요. 물과 흙이 섞여 있어, 유연하게 사람들과 어울리면서도 자기 중심을 잃지 않는 편이에요.' },
+    { name:'일주', stem:'戊', stemBg:'var(--element-earth)', stemColor:'#1a1408',
+      branch:'戌', branchBg:'var(--element-earth)', branchColor:'#1a1408',
+      desc:'일주는 나 자신·배우자운을 나타내요(가장 중요한 자리). 흙으로 꽉 차 있어서, 흔들리지 않는 단단한 성격의 핵심이 여기서 나와요.' },
+    { name:'시주', stem:'庚', stemBg:'var(--element-metal)', stemColor:'#222',
+      branch:'申', branchBg:'var(--element-metal)', branchColor:'#222',
+      desc:'시주는 자녀운·말년운을 나타내요. 쇠 기운이라, 나이 들수록 표현력과 손재주를 활용하는 일에서 결실을 볼 가능성이 커요.' },
+  ];
+  pillars.forEach(p => {
+    const col = document.createElement('div');
+    col.className = 'pillar4-col';
+    col.innerHTML = `
+      <span class="pillar4-label">${p.name}
+        <span class="info-wrap"><span class="info-q" onclick="toggleInfo(this)">?</span>
+        <span class="info-tooltip" style="width:170px;">${p.desc}</span></span>
+      </span>
+      <div class="pillar4-glyph" style="background:${p.stemBg};color:${p.stemColor};">${p.stem}</div>
+      <div class="pillar4-glyph" style="background:${p.branchBg};color:${p.branchColor};">${p.branch}</div>`;
+    el.appendChild(col);
+  });
+})();
+
+(function renderElementColInteractions(){
+  document.querySelectorAll('.element-col').forEach(col => {
+    col.style.cursor = 'pointer';
+    col.addEventListener('click', () => {
+      const existing = col.querySelector('.info-tooltip');
+      document.querySelectorAll('.info-tooltip.show').forEach(t => { if(t!==existing) t.classList.remove('show'); });
+      if(existing){ existing.classList.toggle('show'); return; }
+      const tip = document.createElement('span');
+      tip.className = 'info-tooltip show';
+      tip.style.cssText = 'left:50%;top:100%;transform:translateX(-50%);margin-top:4px;width:120px;text-align:center;';
+      tip.textContent = col.dataset.name;
+      col.style.position = 'relative';
+      col.appendChild(tip);
+    });
+  });
+})();
+
+/* ===== 히어로 슬라이더 컨트롤러 ===== */
+let curHeroIdx = 0;
+const sajuHeroRow = document.getElementById('sajuHeroRow');
+const sajuHeroSlides = sajuHeroRow.querySelectorAll('.saju-hero-slide');
+
+function goNextHeroSlide(){
+  if(curHeroIdx < sajuHeroSlides.length - 1){
+    curHeroIdx++;
+    updateHeroSlideScroll();
+  }
+}
+function goPrevHeroSlide(){
+  if(curHeroIdx > 0){
+    curHeroIdx--;
+    updateHeroSlideScroll();
+  }
+}
+function updateHeroSlideScroll(){
+  const slideW = sajuHeroSlides[0].offsetWidth + 10;
+  sajuHeroRow.scroll({left: curHeroIdx * slideW, behavior: 'smooth'});
+}
+
+(function initSajuHero(){
+  const dotsWrap = document.getElementById('sajuDots');
+  sajuHeroSlides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'saju-dot' + (i === 0 ? ' active' : '');
+    dotsWrap.appendChild(dot);
+  });
+  
+  enableDragScroll(sajuHeroRow);
+  sajuHeroRow.addEventListener('scroll', () => {
+    const slideW = sajuHeroSlides[0].offsetWidth + 10;
+    const idx = Math.round(sajuHeroRow.scrollLeft / slideW);
+    curHeroIdx = Math.min(idx, sajuHeroSlides.length - 1);
+    
+    const dots = dotsWrap.querySelectorAll('.saju-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === curHeroIdx));
+    
+    document.getElementById('heroPrevBtn').classList.toggle('hide', curHeroIdx === 0);
+    document.getElementById('heroNextBtn').classList.toggle('hide', curHeroIdx === sajuHeroSlides.length - 1);
+  });
+})();
+
+/* ===== 카카오 액션 스크립트 ===== */
+function showToast(msg){
+  const t = document.getElementById('toastMsg');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 2800);
+}
+
+function handleKakaoSyncSave(){
+  showToast("🔒 카카오 1초 간편로그인 진행 중... (채널 친구 추가 완료)");
+}
+
+function handleKakaoViralShare(){
+  const personalViralUrl = `${window.location.origin}/share?uid=user_19881010`;
+  showToast("💬 카카오톡 실행 중... (정유창 님 전용 분석표 전송)");
+  
+  if(navigator.share){
+    navigator.share({
+      title: '정유창 님의 사주 원국 분석표 도착!',
+      text: '무술일주(황금개) 에너지 강한 사주! 너의 사주도 3초 만에 무료로 확인해봐 👉',
+      url: personalViralUrl
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(personalViralUrl).then(() => {
+      showToast("🔗 친구에게 보낼 전용 공유 링크가 복사되었습니다!");
+    });
+  }
+}
+
+function updateDeckCountdown(){
+  const now = new Date();
+  const end = new Date(now); end.setHours(24,0,0,0);
+  const diff = Math.max(0, end - now);
+  const h = String(Math.floor(diff/3600000)).padStart(2,'0');
+  const m = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+  document.getElementById('deckCountdown').textContent = `${h}:${m}:${s}`;
+}
+setInterval(updateDeckCountdown, 1000);
+updateDeckCountdown();
+</script>
+</body>
+</html>

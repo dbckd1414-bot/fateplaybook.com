@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정유창 님의 운명 공략집 — 사주 원국 심층 분석표</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0c; --card:#1a1a1e; --card-2:#232328;
+    --gold:#d4af37; --gold-2:#f0d060; --gold-dim:#8a6f24;
+    --text:#f4f4f5; --muted:#a1a1aa; --muted-2:#71717a;
+    --line: rgba(255,255,255,0.08);
+    --element-wood: #22c55e;
+    --element-fire: #ef4444;
+    --element-earth: var(--gold-2);
+    --element-metal: #c4c4cc;
+    --element-water: #38bdf8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;-webkit-font-smoothing:antialiased;}
+  .app{max-width:440px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;box-shadow:0 0 60px rgba(0,0,0,0.6);padding-bottom:120px;}
+
+  /* 상단 네비바 */
+  .share-header{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,12,0.96);backdrop-filter:blur(8px);position:sticky;top:0;z-index:40;}
+  .share-logo{font-family:'Noto Serif KR';font-weight:900;font-size:15px;color:var(--gold-2);margin:0;display:flex;align-items:center;gap:6px;}
+  .share-badge{background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.3);color:var(--gold-2);font-size:10px;font-weight:800;padding:3px 8px;border-radius:100px;font-family:'JetBrains Mono';}
+
+  .share-body{padding:18px 16px;display:flex;flex-direction:column;gap:18px;}
+
+  /* 1. 상단 인트로 훅 배너 */
+  .viral-banner{background:radial-gradient(ellipse 340px 180px at 50% 0%, rgba(212,175,55,0.18), transparent 70%), var(--card);border:1px solid rgba(212,175,55,0.35);border-radius:18px;padding:22px 18px;text-align:center;}
+  .viral-sender{font-size:12px;color:var(--gold-2);font-weight:800;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px;}
+  .viral-title{font-family:'Noto Serif KR';font-weight:900;font-size:20px;line-height:1.45;margin:0 0 8px;}
+  .viral-desc{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0;}
+
+  /* 세로 웹툰 섹션 공통 카드 */
+  .report-section{
+    background:linear-gradient(165deg, var(--card-2), var(--card));
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:18px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .section-label{
+    font-family:'JetBrains Mono';
+    font-size:12px;
+    color:var(--gold-2);
+    letter-spacing:.08em;
+    font-weight:800;
+    margin:0;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  /* 공통 컴포넌트 */
+  .user-info-box{background:rgba(0,0,0,0.25);border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+  .user-info-row{display:flex;align-items:center;justify-content:space-between;}
+  .user-info-name{font-size:13px;font-weight:700;}
+  .user-info-sub{font-size:11px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono';}
+
+  .summary-4grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .summary-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 4px;text-align:center;}
+  .summary-card-icon-circle{width:32px;height:32px;border-radius:50%;border:1px solid rgba(212,175,55,0.25);
+    background:linear-gradient(160deg, var(--card-2), var(--card));display:flex;align-items:center;justify-content:center;
+    font-size:14px;margin:0 auto 6px;}
+  .summary-card-label{font-size:9.5px;color:var(--muted);margin-bottom:2px;}
+  .summary-card-value{font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;}
+  .summary-card-sub{font-size:8.5px;color:var(--gold-2);margin-top:2px;opacity:0.85;}
+
+  .hero-insight-card{background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:12px 14px;}
+  .hero-insight-badge{font-size:10.5px;font-weight:800;color:var(--gold-2);margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+  .hero-insight-text{font-size:12px;line-height:1.65;color:#e4e4e7;margin:0 0 8px;}
+  .hero-tag-row{display:flex;flex-wrap:wrap;gap:5px;}
+  .hero-tag{font-size:9.5px;background:rgba(255,255,255,0.05);border:1px solid var(--line);padding:2px 7px;border-radius:5px;color:var(--muted);}
+
+  /* 슬라이드 2 표 */
+  .pillar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;}
+  .pillar-col-label{font-size:10px;color:var(--muted-2);margin-bottom:4px;}
+  .pillar-tengod{font-size:9.5px;font-weight:700;margin-bottom:4px;color:var(--gold-2);}
+  .pillar-tengod.sub{font-size:8.5px;color:var(--muted-2);font-weight:400;margin:2px 0 0;}
+  .pillar-box{border-radius:8px;padding:9px 2px;font-family:'Noto Serif KR';font-weight:800;font-size:19px;margin-bottom:4px;}
+  .pillar-box.wood{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);color:#fff;}
+  .pillar-box.fire{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fff;}
+  .pillar-box.earth{background:linear-gradient(145deg, var(--gold-2), var(--gold-dim));color:#1a1408;}
+  .pillar-box.metal{background:rgba(196,196,204,0.15);border:1px solid rgba(196,196,204,0.4);color:#fff;}
+  .pillar-box.water{background:rgba(56,189,248,0.2);border:1px solid rgba(56,189,248,0.4);color:#fff;}
+  .pillar-sub{font-size:8.5px;color:var(--muted-2);margin-top:2px;}
+  .pillar-wonsung{font-size:9px;font-weight:700;color:var(--text);margin-top:4px;background:rgba(0,0,0,0.3);padding:3px 0;border-radius:4px;}
+
+  /* 슬라이드 3 오행 & 8글자 */
+  .element-list{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+  .element-col{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 4px;
+    display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .element-col-chip{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;color:#fff;}
+  .element-col-count{font-family:'JetBrains Mono';font-weight:800;font-size:14.5px;color:var(--text);}
+  
+  .pillar4-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .pillar4-col{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .pillar4-label{font-size:8.5px;color:var(--muted-2);display:flex;align-items:center;gap:2px;}
+  .pillar4-glyph{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:800;}
+
+  /* 슬라이드 4 밸런스 */
+  .slide4-gauge-box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 6px;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+  .slide4-score{font-family:'Noto Serif KR';font-weight:900;font-size:32px;color:var(--gold-2);line-height:1;}
+  .slide4-level{font-size:11px;font-weight:800;color:#fff;margin-top:4px;background:rgba(212,175,55,0.2);padding:2px 8px;border-radius:4px;}
+
+  .balance-metric-wrap{background:rgba(0,0,0,0.25);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+  .balance-metric-title{font-size:11px;font-weight:700;color:var(--gold-2);margin-bottom:8px;display:flex;justify-content:space-between;}
+  .balance-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .balance-row:last-child{margin-bottom:0;}
+  .balance-name{font-size:10.5px;color:var(--muted);width:84px;flex-shrink:0;}
+  .balance-track{flex:1;height:5px;background:var(--card-2);border-radius:100px;overflow:hidden;}
+  .balance-fill{height:100%;border-radius:100px;}
+  .balance-pct{font-family:'JetBrains Mono';font-size:10px;font-weight:700;width:32px;text-align:right;}
+
+  /* 슬라이드 5 총평 & 파트너 */
+  .stat-grid-4{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
+  .stat-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;}
+  .stat-label{font-size:11px;color:var(--muted);font-weight:500;}
+  .stat-grade{font-family:'JetBrains Mono';font-size:12px;font-weight:900;color:var(--gold-2);}
+
+  .action-guide-box{display:flex;flex-direction:column;gap:5px;}
+  .action-item{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:11px;line-height:1.5;display:flex;align-items:flex-start;gap:6px;}
+  .action-item strong{color:var(--gold-2);flex-shrink:0;}
+
+  .destiny-partner-card{background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.25);border-radius:10px;padding:10px 12px;}
+  .partner-title{font-size:11.5px;font-weight:800;color:#60a5fa;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
+  .partner-desc{font-size:11px;color:#d4d4d8;line-height:1.55;margin:0;}
+
+  /* 툴팁 */
+  .info-q{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;
+    background:rgba(212,175,55,0.15);color:var(--gold-2);font-size:9.5px;font-weight:800;border:1px solid rgba(212,175,55,0.3);
+    cursor:pointer;flex-shrink:0;margin-left:4px;}
+  .info-tooltip{display:none;position:absolute;z-index:50;background:var(--card-2);border:1px solid rgba(212,175,55,0.35);
+    border-radius:8px;padding:8px 10px;font-size:9.5px;color:var(--muted);line-height:1.5;width:200px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.5);}
+  .info-tooltip.show{display:block;}
+  .info-wrap{position:relative;display:inline-flex;align-items:center;}
+
+  /* 하단 케미 유도 & 49개 공략집 티저 */
+  .chemistry-box{background:linear-gradient(145deg, rgba(56,189,248,0.12), rgba(212,175,55,0.12));border:1.5px dashed rgba(212,175,55,0.45);border-radius:16px;padding:18px 16px;text-align:center;}
+  .chemistry-title{font-size:13.5px;font-weight:800;color:var(--gold-2);margin-bottom:6px;}
+  .chemistry-desc{font-size:12px;color:#d4d4d8;line-height:1.6;margin:0 0 12px;}
+  .chemistry-tag{display:inline-block;background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.15);padding:5px 12px;border-radius:100px;font-size:11.5px;color:var(--text);font-weight:700;}
+
+  .lock-teaser-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;}
+  .lock-teaser-head{font-size:12px;font-weight:800;color:var(--gold-2);margin-bottom:10px;display:flex;align-items:center;gap:4px;}
+  .lock-teaser-list{display:flex;flex-direction:column;gap:8px;}
+  .lock-teaser-item{background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;}
+
+  /* ===== 하단 상시 고정 CTA 바 ===== */
+  .fixed-cta-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(10,10,12,0.94);backdrop-filter:blur(10px);border-top:1px solid rgba(212,175,55,0.25);z-index:100;box-shadow:0 -8px 24px rgba(0,0,0,0.6);}
+  .btn-viral-cta{width:100%;background:linear-gradient(135deg, var(--gold-2), var(--gold-dim));border:none;border-radius:12px;padding:16px;color:#1a1408;font-family:'Noto Sans KR',sans-serif;font-weight:900;font-size:15.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(212,175,55,0.35);animation:ctaPulse 2.2s infinite ease-in-out;}
+  .btn-viral-cta:active{transform:scale(0.98);}
+
+  @keyframes ctaPulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(212,175,55,0.3); }
+    50% { box-shadow: 0 4px 30px rgba(240,208,96,0.65); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 헤더 -->
+  <header class="share-header">
+    <h1 class="share-logo">🔮 내 운명 공략집</h1>
+    <span class="share-badge">정유창 님의 심층 리포트</span>
+  </header>
+
+  <main class="share-body">
+
+    <!-- 1. 바이럴 인트로 배너 -->
+    <div class="viral-banner">
+      <div class="viral-sender">💬 정유창 님이 보낸 운명 공략표</div>
+      <h2 class="viral-title">"거대한 산처럼 흔들리지 않는<br>압도적 뚝심과 카리스마"</h2>
+      <p class="viral-desc">친구의 사주 5대 정밀 분석표를 아래로 스크롤하여 확인해보세요.</p>
+    </div>
+
+    <!-- 2. STEP 01: 운명 핵심 요약 -->
+    <section class="report-section">
+      <p class="section-label">👑 STEP 01. 타고난 본질 및 핵심 요약</p>
+      
+      <div class="user-info-box">
+        <div class="user-info-row">
+          <span class="user-info-name">정유창 (본인) 남성</span>
+          <span class="user-info-sub" style="color:var(--gold-2);">무술(戊戌)일주</span>
+        </div>
+        <div class="user-info-row">
+          <span class="user-info-sub">1988.10.10 (양력) 15:45</span>
+          <span class="user-info-sub">극신강 · 괴강격</span>
+        </div>
+      </div>
+
+      <div class="summary-4grid">
+        <div class="summary-card">
+          <div class="summary-card-icon-circle" style="background:var(--gold-2);color:#1a1408;font-weight:900;">토</div>
+          <p class="summary-card-label">나의 오행</p>
+          <p class="summary-card-value">토(土)</p>
+          <p class="summary-card-sub">비중 62.5%</p>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-icon-circle">🐶</div>
+          <p class="summary-card-label">일주 동물</p>
+          <p class="summary-card-value">노란 개</p>
+          <p class="summary-card-sub">황금개</p>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-icon-circle">💎</div>
+          <p class="summary-card-label">타고난 성향</p>
+          <p class="summary-card-value">비견</p>
+          <p class="summary-card-sub">강한 주체성</p>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-icon-circle">⚡</div>
+          <p class="summary-card-label">대표 신살</p>
+          <p class="summary-card-value">괴강살</p>
+          <p class="summary-card-sub">우두머리 기질</p>
+        </div>
+      </div>
+
+      <div class="hero-insight-card">
+        <div class="hero-insight-badge">⚡ AI 하드웨어 1줄 팩폭 진단</div>
+        <p class="hero-insight-text">"거대한 산처럼 흔들리지 않는 <strong>압도적인 뚝심과 카리스마</strong>. 남 밑에 있기보다 직접 판을 짤 때 운이 폭발하는 자수성가형입니다."</p>
+        <div class="hero-tag-row">
+          <span class="hero-tag">#자수성가형</span>
+          <span class="hero-tag">#동업절대주의</span>
+          <span class="hero-tag">#자기판짜기</span>
+          <span class="hero-tag">#은근한츤데레</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. STEP 02: 사주 원국 4기둥 -->
+    <section class="report-section">
+      <p class="section-label">📊 STEP 02. 상세 사주 원국 4기둥</p>
+      
+      <div class="pillar-grid">
+        <div>
+          <p class="pillar-col-label">시주</p>
+          <p class="pillar-tengod">식신</p>
+          <div class="pillar-box metal">庚</div>
+          <p class="pillar-sub">+경, 쇠금</p>
+          <div class="pillar-box metal">申</div>
+          <p class="pillar-sub">+신, 쇠금</p>
+          <p class="pillar-tengod sub">식신</p>
+          <p class="pillar-wonsung">병</p>
+        </div>
+        <div>
+          <p class="pillar-col-label">일주</p>
+          <p class="pillar-tengod">일원</p>
+          <div class="pillar-box earth">戊</div>
+          <p class="pillar-sub">+무, 흙토</p>
+          <div class="pillar-box earth">戌</div>
+          <p class="pillar-sub">+술, 흙토</p>
+          <p class="pillar-tengod sub">비견</p>
+          <p class="pillar-wonsung">묘</p>
+        </div>
+        <div>
+          <p class="pillar-col-label">월주</p>
+          <p class="pillar-tengod">편재</p>
+          <div class="pillar-box water">壬</div>
+          <p class="pillar-sub">+임, 물수</p>
+          <div class="pillar-box earth">戌</div>
+          <p class="pillar-sub">+술, 흙토</p>
+          <p class="pillar-tengod sub">비견</p>
+          <p class="pillar-wonsung">묘</p>
+        </div>
+        <div>
+          <p class="pillar-col-label">년주</p>
+          <p class="pillar-tengod">비견</p>
+          <div class="pillar-box earth">戊</div>
+          <p class="pillar-sub">+무, 흙토</p>
+          <div class="pillar-box earth">辰</div>
+          <p class="pillar-sub">+진, 흙토</p>
+          <p class="pillar-tengod sub">비견</p>
+          <p class="pillar-wonsung">관대</p>
+        </div>
+      </div>
+
+      <div class="hero-insight-card">
+        <div class="hero-insight-badge">🔍 원국 구조 핵심 포인트</div>
+        <p class="hero-insight-text">기둥 4개 중 <strong>토 기운이 5글자</strong>를 차지해 에너지가 응축된 구조예요. 표현력을 살려 재물을 캐내면 유리해요.</p>
+        <div class="hero-tag-row">
+          <span class="hero-tag">#토기운강함</span>
+          <span class="hero-tag">#전문기술특화</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. STEP 03: 오행 균형 및 8칸 시각화 -->
+    <section class="report-section">
+      <p class="section-label">🌳 STEP 03. 오행 균형 및 8칸 그리드</p>
+      
+      <div class="element-list">
+        <div class="element-col" data-name="관성 · 책임감·통제력">
+          <div class="element-col-chip" style="background:var(--element-wood);">목</div>
+          <span class="element-col-count">0개</span>
+        </div>
+        <div class="element-col" data-name="인성 · 배움·수용력">
+          <div class="element-col-chip" style="background:var(--element-fire);">화</div>
+          <span class="element-col-count">0개</span>
+        </div>
+        <div class="element-col" data-name="비겁 · 내 고집·주체성">
+          <div class="element-col-chip" style="background:var(--element-earth);color:#1a1408;">토</div>
+          <span class="element-col-count">5개</span>
+        </div>
+        <div class="element-col" data-name="식상 · 재능 발산력">
+          <div class="element-col-chip" style="background:var(--element-metal);color:#222;">금</div>
+          <span class="element-col-count">2개</span>
+        </div>
+        <div class="element-col" data-name="재성 · 돈 버는 감각">
+          <div class="element-col-chip" style="background:var(--element-water);">수</div>
+          <span class="element-col-count">1개</span>
+        </div>
+      </div>
+
+      <div class="pillar4-grid" id="pillar4Grid"></div>
+
+      <div class="hero-insight-card">
+        <div class="hero-insight-badge">💊 오행 개운 처방전</div>
+        <p class="hero-insight-text">부족한 <strong>목과 수 기운</strong>을 채우면 재물길이 뚫려요. 물을 자주 마시고 산책하면 도움이 돼요.</p>
+        <div class="hero-tag-row">
+          <span class="hero-tag">#물자주마시기</span>
+          <span class="hero-tag">#유산소운동</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. STEP 04: 타고난 에너지 세기 & 멘탈 밸런스 -->
+    <section class="report-section">
+      <p class="section-label">🔄 STEP 04. 타고난 에너지 세기 & 멘탈 밸런스</p>
+      
+      <div class="slide4-gauge-box">
+        <span style="font-size:10.5px;color:var(--muted);margin-bottom:2px;">신강신약 · 타고난 에너지 세기</span>
+        <span class="slide4-score">70</span>
+        <span class="slide4-level">에너지 강함 (극신강)</span>
+        <p style="font-size:10px;color:var(--muted-2);margin:6px 0 0;line-height:1.4;text-align:center;">
+          💡 타고난 기운이 강한지 약한지를 0~100점으로 나타낸 점수예요.
+        </p>
+      </div>
+
+      <div class="balance-metric-wrap">
+        <div class="balance-metric-title">
+          <span>⚡ 타고난 멘탈 & 실행 밸런스</span>
+        </div>
+        <div class="balance-row">
+          <span class="balance-name">회복 탄력성
+            <span class="info-wrap"><span class="info-q" onclick="toggleInfo(this)">?</span>
+            <span class="info-tooltip">위기에서 얼마나 빨리 회복하는지예요. 70%면 웬만한 타격은 금방 털어내요.</span></span>
+          </span>
+          <div class="balance-track"><div class="balance-fill" style="width:70%;background:linear-gradient(90deg,#e0793c,var(--gold-2));"></div></div>
+          <span class="balance-pct" style="color:var(--gold-2);">70%</span>
+        </div>
+        <div class="balance-row">
+          <span class="balance-name">자기 주도권
+            <span class="info-wrap"><span class="info-q" onclick="toggleInfo(this)">?</span>
+            <span class="info-tooltip">남 말보다 내 판단을 믿고 밀어붙이는 힘이에요. 88%면 주관이 아주 강한 편이에요.</span></span>
+          </span>
+          <div class="balance-track"><div class="balance-fill" style="width:87.5%;background:linear-gradient(90deg,#3b82f6,#60a5fa);"></div></div>
+          <span class="balance-pct" style="color:#60a5fa;">88%</span>
+        </div>
+        <div class="balance-row">
+          <span class="balance-name">타인 의존도
+            <span class="info-wrap"><span class="info-q" onclick="toggleInfo(this)">?</span>
+            <span class="info-tooltip">낮을수록 남에게 안 기대는 타입이에요. 0%는 "전혀 안 기댄다"에 가까워요.</span></span>
+          </span>
+          <div class="balance-track"><div class="balance-fill" style="width:0%;background:#71717a;"></div></div>
+          <span class="balance-pct" style="color:var(--muted);">0%</span>
+        </div>
+      </div>
+
+      <div class="hero-insight-card">
+        <div class="hero-insight-badge">🔥 에너지 강한 사람의 실행 원칙</div>
+        <p class="hero-insight-text">"남의 의견에 휘둘릴 때보다 <strong>나의 직관을 믿고 독립적으로 추진할 때</strong> 성과가 더 좋게 나타나요."</p>
+        <div class="hero-tag-row">
+          <span class="hero-tag">#강한추진력</span>
+          <span class="hero-tag">#독립적결정</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. STEP 05: 운명 하드웨어 총평 & 귀인 매칭 -->
+    <section class="report-section">
+      <p class="section-label">💡 STEP 05. 운명 하드웨어 총평 & 귀인 파트너
+        <span class="info-wrap">
+          <span class="info-q" onclick="toggleInfo(this)">?</span>
+          <span class="info-tooltip" style="width:210px;">판단 기준(8글자 중 개수)<br>0개=D · 1개=C · 2개=B · 3개=A · 4개=S · 5개=S+ · 6개=SS · 7개=SS+ · 8개=SSS</span>
+        </span>
+      </p>
+      
+      <div class="user-info-box">
+        <div style="font-size:12px;font-weight:800;color:var(--gold-2);margin-bottom:3px;">👑 무술일주 · 괴강일주 마스터 진단</div>
+        <div style="font-size:11.5px;line-height:1.5;color:#e4e4e7;">
+          거대한 산처럼 우직한 신뢰감과 뚝심. 어떤 위기가 와도 판을 뒤집는 <strong>자수성가형 기질</strong>입니다.
+        </div>
+      </div>
+
+      <div class="stat-grid-4">
+        <div class="stat-card">
+          <span class="stat-label">뚝심·돌파력</span>
+          <span class="stat-grade" data-count="5"></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">위기 극복력</span>
+          <span class="stat-grade" data-score="70"></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">재물 포착력</span>
+          <span class="stat-grade" data-count="1"></span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">조직 순응도</span>
+          <span class="stat-grade" data-score="12.5"></span>
+        </div>
+      </div>
+
+      <div class="action-guide-box">
+        <div class="action-item">
+          <strong>🚀 장점:</strong> 한번 정한 목표는 끝까지 밀어붙이는 압도적인 추진력
+        </div>
+        <div class="action-item">
+          <strong style="color:#ff8899;">⚠️ 주의:</strong> 재물 감각은 상대적으로 약해, 돈 관리는 별도 원칙 수립 권장
+        </div>
+      </div>
+
+      <div class="destiny-partner-card">
+        <div class="partner-title">🔑 평생 개운 & 귀인 파트너 매칭</div>
+        <p class="partner-desc">
+          나의 귀인은 <strong>쇠(금)와 물(수) 기운</strong>을 가진 사람입니다. 내 뚝심을 존중해주며 현실적 금전 감각을 불어넣어 줄 파트너가 최적입니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- 7. 바이럴 케미 유도 & 49개 공략집 티저 -->
+    <section class="chemistry-box">
+      <div class="chemistry-title">🔑 정유창 님과 나의 궁합 케미는?</div>
+      <p class="chemistry-desc">
+        정유창 님을 성공으로 이끄는 최고의 귀인은 <strong>쇠(금)와 물(수) 기운</strong>을 가진 사람입니다.
+      </p>
+      <span class="chemistry-tag">👉 혹시 내가 정유창 님의 평생 귀인일까?</span>
+    </section>
+
+    <section class="lock-teaser-card">
+      <div class="lock-teaser-head">🔒 아직 풀리지 않은 정유창 님의 49개 공략집</div>
+      <div class="lock-teaser-list">
+        <div class="lock-teaser-item">
+          <span>💰 평생 재물 그릇 크기와 목돈 타이밍</span>
+          <span>🔒 비공개</span>
+        </div>
+        <div class="lock-teaser-item">
+          <span>⚠️ 에너지를 갉아먹는 피해야 할 사람</span>
+          <span>🔒 비공개</span>
+        </div>
+        <div class="lock-teaser-item">
+          <span>📈 인생 10년 대운의 계절과 기회의 시기</span>
+          <span>🔒 비공개</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== 하단 상시 고정 초대 대형 CTA 바 ===== -->
+  <div class="fixed-cta-bar">
+    <button class="btn-viral-cta" onclick="startMySajuTest()">
+      <span>👉 내 사주도 3초 만에 무료 분석하기</span>
+    </button>
+  </div>
+
+</div>
+
+<script>
+// URL 파라미터에서 공유자 ID 읽기 (?id=user_19881010)
+const urlParams = new URLSearchParams(window.location.search);
+const sharedId = urlParams.get('id') || 'user_guest';
+
+function startMySajuTest(){
+  // 메인 입력 및 진단 페이지로 연결 (추천인 id 동봉)
+  window.location.href = `/?ref=${sharedId}`;
+}
+
+// ===== 등급 변환 공통 함수 =====
+function gradeByCount(n){
+  const table = ['D','C','B','A','S','S+','SS','SS+','SSS'];
+  return table[Math.max(0, Math.min(8, n))];
+}
+function gradeByScore(score){
+  const idx = Math.min(8, Math.floor(score / (100/9)));
+  return gradeByCount(idx);
+}
+const GRADE_COLOR = {
+  'D':'var(--muted)', 'C':'var(--muted)', 'B':'var(--gold-2)', 'A':'var(--gold-2)',
+  'S':'#60a5fa', 'S+':'#60a5fa', 'SS':'#ff8899', 'SS+':'#ff8899', 'SSS':'#ff3355'
+};
+
+function toggleInfo(btn){
+  const tooltip = btn.nextElementSibling;
+  const wasOpen = tooltip.classList.contains('show');
+  document.querySelectorAll('.info-tooltip.show').forEach(t => { t.classList.remove('show'); t.style.left=''; t.style.right=''; t.style.transform=''; });
+  if(!wasOpen){
+    tooltip.classList.add('show');
+    requestAnimationFrame(() => {
+      const rect = tooltip.getBoundingClientRect();
+      const slide = tooltip.closest('.report-section') || document.body;
+      const bound = slide.getBoundingClientRect();
+      if(rect.right > bound.right - 4){
+        tooltip.style.left = 'auto';
+        tooltip.style.right = '0';
+        tooltip.style.transform = 'none';
+      }
+      if(rect.left < bound.left + 4){
+        tooltip.style.left = '0';
+        tooltip.style.right = 'auto';
+        tooltip.style.transform = 'none';
+      }
+    });
+  }
+}
+document.addEventListener('click', (e) => {
+  if(!e.target.classList.contains('info-q')){
+    document.querySelectorAll('.info-tooltip.show').forEach(t => t.classList.remove('show'));
+  }
+});
+
+// ===== 등급 렌더링 =====
+(function renderGrades(){
+  document.querySelectorAll('[data-count], [data-score]').forEach(el => {
+    let grade;
+    if(el.dataset.count !== undefined){
+      grade = gradeByCount(parseInt(el.dataset.count, 10));
+    } else {
+      grade = gradeByScore(parseFloat(el.dataset.score));
+    }
+    el.textContent = grade;
+    el.style.color = GRADE_COLOR[grade];
+  });
+})();
+
+// ===== 사주 8글자 그리드 렌더링 =====
+(function renderPillar4Grid(){
+  const el = document.getElementById('pillar4Grid');
+  if(!el) return;
+  const pillars = [
+    { name:'년주', stem:'戊', stemBg:'var(--element-earth)', stemColor:'#1a1408',
+      branch:'辰', branchBg:'var(--element-earth)', branchColor:'#1a1408',
+      desc:'년주는 어릴 적 환경·집안 분위기를 나타내요. 여기가 흙 기운이라, 안정적이고 보수적인 가정 분위기에서 자랐을 가능성이 커요.' },
+    { name:'월주', stem:'壬', stemBg:'var(--element-water)', stemColor:'#fff',
+      branch:'戌', branchBg:'var(--element-earth)', branchColor:'#1a1408',
+      desc:'월주는 부모·형제, 사회생활 스타일을 나타내요. 물과 흙이 섞여 있어, 유연하게 사람들과 어울리면서도 자기 중심을 잃지 않는 편이에요.' },
+    { name:'일주', stem:'戊', stemBg:'var(--element-earth)', stemColor:'#1a1408',
+      branch:'戌', branchBg:'var(--element-earth)', branchColor:'#1a1408',
+      desc:'일주는 나 자신·배우자운을 나타내요(가장 중요한 자리). 흙으로 꽉 차 있어서, 흔들리지 않는 단단한 성격의 핵심이 여기서 나와요.' },
+    { name:'시주', stem:'庚', stemBg:'var(--element-metal)', stemColor:'#222',
+      branch:'申', branchBg:'var(--element-metal)', branchColor:'#222',
+      desc:'시주는 자녀운·말년운을 나타내요. 쇠 기운이라, 나이 들수록 표현력과 손재주를 활용하는 일에서 결실을 볼 가능성이 커요.' },
+  ];
+  pillars.forEach(p => {
+    const col = document.createElement('div');
+    col.className = 'pillar4-col';
+    col.innerHTML = `
+      <span class="pillar4-label">${p.name}
+        <span class="info-wrap"><span class="info-q" onclick="toggleInfo(this)">?</span>
+        <span class="info-tooltip" style="width:170px;">${p.desc}</span></span>
+      </span>
+      <div class="pillar4-glyph" style="background:${p.stemBg};color:${p.stemColor};">${p.stem}</div>
+      <div class="pillar4-glyph" style="background:${p.branchBg};color:${p.branchColor};">${p.branch}</div>`;
+    el.appendChild(col);
+  });
+})();
+</script>
+</body>
+</html>

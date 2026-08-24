@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>평생 인생 치트키 — 상세페이지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0c; --card:#1a1a1e; --card-2:#141416;
+    --gold:#d4af37; --gold-2:#f0d060; --gold-dim:#8a6f24;
+    --text:#f4f4f5; --muted:#a1a1aa; --muted-2:#71717a;
+    --line: rgba(255,255,255,0.08); --danger:#ff5566;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;-webkit-font-smoothing:antialiased;}
+  .app{max-width:440px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;box-shadow:0 0 60px rgba(0,0,0,0.6);padding-bottom:110px;}
+
+  /* ===== 1. 히어로 훅 + 권위부여 ===== */
+  .hero{padding:60px 22px 30px;text-align:center;background:
+    radial-gradient(ellipse 500px 280px at 50% 0%, rgba(212,175,55,0.15), transparent 60%);}
+  .hero-hook{font-family:'Noto Serif KR';font-weight:900;font-size:22px;line-height:1.5;margin:0 0 14px;}
+  .hero-hook .highlight{color:var(--gold-2);}
+  .hero-authority{font-size:13px;color:var(--muted);line-height:1.7;margin:0 0 24px;}
+  .authority-badge{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid rgba(212,175,55,0.3);
+    border-radius:100px;padding:8px 16px;font-family:'JetBrains Mono';font-size:11px;color:var(--gold-2);}
+
+  /* ===== 2. 50개(49개) 세부목차 전면 공개 ===== */
+  section{padding:0 18px;margin-top:36px;}
+  .section-title{font-family:'Noto Serif KR';font-weight:800;font-size:19px;margin:0 0 4px;text-align:center;}
+  .section-sub{font-size:12.5px;color:var(--muted-2);text-align:center;margin:0 0 20px;}
+  .toc-chapter{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:10px;}
+  .toc-chapter-title{font-family:'Noto Serif KR';font-weight:700;font-size:14.5px;color:var(--gold-2);
+    margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;}
+  .toc-count{font-family:'JetBrains Mono';font-size:10px;color:var(--muted-2);font-weight:400;}
+  .toc-item{font-size:12.5px;color:var(--muted);padding:5px 0;border-top:1px solid var(--line);}
+  .toc-item:first-child{border-top:none;}
+  .toc-total{text-align:center;margin:20px 0 8px;font-family:'JetBrains Mono';font-size:13px;color:var(--gold);}
+  .toc-total b{font-size:22px;color:var(--gold-2);}
+
+  /* ===== 3. 1:9 무료가치 앵커링 ===== */
+  .freemium-box{background:linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.03));
+    border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:20px;text-align:center;}
+  .freemium-ratio{display:flex;justify-content:center;gap:16px;margin-bottom:14px;}
+  .ratio-block{flex:1;max-width:130px;}
+  .ratio-num{font-family:'Noto Serif KR';font-weight:900;font-size:26px;}
+  .ratio-block.free .ratio-num{color:var(--muted);}
+  .ratio-block.paid .ratio-num{color:var(--gold-2);}
+  .ratio-label{font-size:11px;color:var(--muted-2);margin-top:2px;}
+  .freemium-desc{font-size:12.5px;color:var(--muted);line-height:1.6;}
+
+  /* ===== 4. 리뷰 (실데이터 없어 형식만) ===== */
+  .review-item{display:flex;gap:10px;padding:12px 0;border-top:1px solid var(--line);}
+  .review-item:first-child{border-top:none;}
+  .review-avatar{width:34px;height:34px;border-radius:50%;background:var(--card);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .review-meta{font-size:11px;color:var(--muted-2);margin-bottom:3px;}
+  .review-meta b{color:var(--muted);}
+  .review-purchase{background:rgba(212,175,55,0.12);color:var(--gold-2);font-size:9px;font-weight:700;
+    padding:1px 6px;border-radius:5px;margin-left:4px;}
+  .review-text{font-size:13px;line-height:1.6;color:#d4d4d8;margin:0;}
+
+  /* ===== 5. 가격 앵커링 ===== */
+  .price-box{background:var(--card);border:1.5px solid var(--gold-dim);border-radius:18px;padding:24px;text-align:center;}
+  .price-discount-badge{display:inline-block;background:var(--danger);color:#fff;font-weight:900;font-size:14px;
+    padding:5px 14px;border-radius:100px;margin-bottom:12px;}
+  .price-original{font-size:15px;color:var(--muted-2);text-decoration:line-through;margin-bottom:2px;}
+  .price-final{font-family:'Noto Serif KR';font-weight:900;font-size:36px;color:var(--gold-2);}
+  .price-final .won{font-size:20px;}
+  .price-note{font-size:11px;color:var(--muted-2);margin-top:10px;}
+
+  /* ===== 6. FAQ ===== */
+  .faq-item{border-top:1px solid var(--line);padding:14px 0;}
+  .faq-item:first-child{border-top:none;}
+  .faq-q{font-weight:700;font-size:13.5px;margin:0 0 6px;display:flex;gap:8px;}
+  .faq-q .q-mark{color:var(--gold);flex-shrink:0;}
+  .faq-a{font-size:12.5px;color:var(--muted);line-height:1.7;margin:0;padding-left:22px;}
+
+  /* ===== 7. 환불/면책 ===== */
+  .legal-box{background:var(--card-2);border-radius:12px;padding:16px 18px;font-size:11px;color:var(--muted-2);line-height:1.8;}
+
+  /* ===== 8. 하단 카운트다운 + 스티키 CTA (검증된 음양관 패턴) ===== */
+  .sticky-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;
+    background:linear-gradient(180deg, rgba(10,10,12,0.4), var(--bg) 25%);padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:60;}
+  .countdown-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;
+    font-family:'JetBrains Mono';font-size:11.5px;color:var(--muted);}
+  .countdown-row .discount-tag{color:var(--danger);font-weight:800;}
+  .countdown-timer{color:var(--gold-2);font-weight:800;letter-spacing:0.05em;}
+  .sticky-cta-btn{width:100%;background:linear-gradient(135deg, var(--gold-2), var(--gold-dim));
+    color:#1a1408;font-weight:900;font-size:16px;padding:16px;border:none;border-radius:14px;
+    box-shadow:0 8px 30px -8px rgba(212,175,55,0.6);display:flex;align-items:center;justify-content:center;gap:8px;}
+
+  .placeholder-note{font-family:'JetBrains Mono';font-size:10px;color:#c95050;background:rgba(201,80,80,0.1);
+    border:1px dashed rgba(201,80,80,0.3);padding:8px 10px;border-radius:8px;margin-top:12px;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== 1. 히어로 훅 + 권위부여 ===== -->
+  <div class="hero">
+    <p class="hero-hook">이거 넘기시면<br>올해도 <span class="highlight">그대로</span> 삽니다.</p>
+    <p class="hero-authority">사주가 답답한 이유는 근거 없이 뭉뚱그린 풀이만 받아봐서예요.<br>이번엔 진짜 원문에 근거한 답을 받아보세요.</p>
+    <div class="authority-badge">📜 궁통보감·자평진전 등 9개 명리 고전 원문 검증 기반</div>
+  </div>
+
+  <!-- ===== 2. 세부목차 전면 공개 ===== -->
+  <section>
+    <h2 class="section-title">49개 질문, 전부 공개할게요</h2>
+    <p class="section-sub">숨기지 않아요. 목차 그대로 보여드려요</p>
+
+    <div class="toc-chapter">
+      <p class="toc-chapter-title">1장. 타고난 본질과 숨겨진 성향 <span class="toc-count">7문항</span></p>
+      <p class="toc-item">내 사주 하드웨어의 기본 엔진과 핵심 에너지</p>
+      <p class="toc-item">겉모습과 혼자 있을 때 내면의 괴리</p>
+      <p class="toc-item">머리로는 아는데 안 고쳐지는 고정 습관</p>
+      <p class="toc-item">스트레스 한계치에서 터지는 방어기제</p>
+      <p class="toc-item">외 3문항</p>
+    </div>
+    <div class="toc-chapter">
+      <p class="toc-chapter-title">2장. 재물과 평생 부의 그릇 <span class="toc-count">8문항</span></p>
+      <p class="toc-item">타고난 재물 그릇의 크기와 형태</p>
+      <p class="toc-item">벌어도 통장이 비는 결정적 누수 구멍</p>
+      <p class="toc-item">인생 최대 목돈이 들어오는 황금 타이밍</p>
+      <p class="toc-item">외 5문항</p>
+    </div>
+    <div class="toc-chapter">
+      <p class="toc-chapter-title">3장. 인간관계와 호구 패턴 탈출 <span class="toc-count">6문항</span></p>
+      <p class="toc-item">매번 총대 메는 호구 패턴의 원인</p>
+      <p class="toc-item">감정소모 없이 정리하는 손절 기준선</p>
+      <p class="toc-item">외 4문항</p>
+    </div>
+    <div class="toc-chapter">
+      <p class="toc-chapter-title">4장. 직업과 커리어 독점권 <span class="toc-count">7문항</span></p>
+      <p class="toc-item">시장에서 독점적 우위를 점할 업(業)</p>
+      <p class="toc-item">숨겨진 반전 일머리</p>
+      <p class="toc-item">외 5문항</p>
+    </div>
+    <div class="toc-chapter">
+      <p class="toc-chapter-title">5장. 신체 멘탈 방어 루틴 <span class="toc-count">5문항</span></p>
+    </div>
+    <div class="toc-chapter">
+      <p class="toc-chapter-title">6장. 인생 타임라인과 대운의 계절 <span class="toc-count">6문항</span></p>
+    </div>
+    <div class="toc-chapter">
+      <p class="toc-chapter-title">7장. 평생 소장 실천 가이드 <span class="toc-count">7문항</span></p>
+      <p class="toc-item">평생 곁에 두면 안 되는 사람 유형</p>
+      <p class="toc-item">패가망신을 막는 절대 금기 행동</p>
+      <p class="toc-item">외 5문항</p>
+    </div>
+    <div class="toc-chapter">
+      <p class="toc-chapter-title">8장. 종합 결론 및 실행 헌장 <span class="toc-count">3문항</span></p>
+    </div>
+
+    <p class="toc-total">총 <b>49개</b> 질문 · <b>15,000자</b> 분량</p>
+  </section>
+
+  <!-- ===== 3. 1:9 무료가치 앵커링 ===== -->
+  <section>
+    <div class="freemium-box">
+      <div class="freemium-ratio">
+        <div class="ratio-block free"><div class="ratio-num">1</div><div class="ratio-label">무료 공개<br>(1장 전체)</div></div>
+        <div class="ratio-block paid"><div class="ratio-num">9</div><div class="ratio-label">결제 시 열람<br>(2~8장 전체)</div></div>
+      </div>
+      <p class="freemium-desc">진단(문제)은 먼저 무료로 다 보여드려요.<br>해결책·시기·구체적 처방만 결제 후 열람이에요.</p>
+    </div>
+  </section>
+
+  <!-- ===== 4. 리뷰 (실데이터 대기) ===== -->
+  <section>
+    <h2 class="section-title">실시간 구매 후기</h2>
+    <p class="section-sub">100% 실제 고객님 후기만 올라와요</p>
+    <div id="reviewFeed"></div>
+    <p class="placeholder-note">⚠️ 아직 실제 구매자가 없어서 후기를 지어내지 않고 비워뒀어요. 첫 구매 후기부터 이 형식("이름 · N회 구매 · N시간 전")으로 실시간 쌓이는 구조예요.</p>
+  </section>
+
+  <!-- ===== 5. 가격 앵커링 ===== -->
+  <section>
+    <div class="price-box">
+      <div class="price-discount-badge">80% 할인</div>
+      <div class="price-original">정가 250,000원</div>
+      <div class="price-final"><span class="won">₩</span>48,900</div>
+      <p class="price-note">한 번 결제로 평생 소장 · 재열람 가능</p>
+    </div>
+  </section>
+
+  <!-- ===== 6. FAQ ===== -->
+  <section>
+    <h2 class="section-title">자주 묻는 질문</h2>
+    <div class="faq-item">
+      <p class="faq-q"><span class="q-mark">Q.</span>사주를 잘 몰라도 이해할 수 있나요?</p>
+      <p class="faq-a">네. 한자 용어를 그대로 쓰지 않고 전부 쉬운 말로 풀어서 설명해요. 초등학생도 이해할 수 있는 수준으로 작성돼요.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q"><span class="q-mark">Q.</span>태어난 시간을 몰라도 되나요?</p>
+      <p class="faq-a">네. 시간을 모르시면 연·월·일 3주 중심으로 분석하고, 그 사실을 리포트 안에 명확히 안내해드려요.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q"><span class="q-mark">Q.</span>결제 후 환불이 되나요?</p>
+      <p class="faq-a">디지털 콘텐츠 특성상, 리포트를 열람(결과 확인)하신 이후에는 전자상거래법 제17조 제2항 제5호에 따라 청약철회(환불)가 제한돼요. 열람 전이라면 문의 채널로 연락 주세요.</p>
+    </div>
+  </section>
+
+  <!-- ===== 7. 사업자 정보 ===== -->
+  <section>
+    <div class="legal-box">
+      <p>상호: [[사업자등록 후 입력]] | 대표자: [[입력]]</p>
+      <p>사업자등록번호: [[입력]] | 통신판매업 신고번호: [[입력]]</p>
+      <p>주소: [[입력]] | 이메일: [[입력]]</p>
+      <p style="margin-top:8px;">고객상담은 [[채널 정하신 것]]으로 문의해 주세요.</p>
+    </div>
+  </section>
+
+  <!-- ===== 8. 하단 카운트다운 + 스티키 CTA ===== -->
+  <div class="sticky-bar">
+    <div class="countdown-row">
+      <span class="discount-tag">80% 할인</span>
+      <span>혜택 종료까지</span>
+      <span class="countdown-timer" id="countdown">23:59:59</span>
+    </div>
+    <button class="sticky-cta-btn">⚡ 지금 48,900원에 시작하기</button>
+  </div>
+
+</div>
+
+<script>
+// 카운트다운 (24시간 반복 예시 - 실제 배포시 서버 기준 시각으로 교체 필요)
+function updateCountdown(){
+  const now = new Date();
+  const end = new Date(now); end.setHours(24,0,0,0);
+  const diff = Math.max(0, end - now);
+  const h = String(Math.floor(diff/3600000)).padStart(2,'0');
+  const m = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+  document.getElementById('countdown').textContent = `${h}:${m}:${s}`;
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+</body>
+</html>
